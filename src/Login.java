@@ -115,7 +115,7 @@ public class Login {
 				System.out.println(mobileEntered);
 
 //				checking if the mobile number entered only contains numbers or not through REGULAR EXPRESSION
-				if(!(mobileEntered.matches("[0-9]+"))){
+				if(!((mobileEntered.matches("[0-9]+") && mobileEntered.length()==10))){
 					JOptionPane.showMessageDialog(null, "Please enter valid mobile number");
 				}
 				else {
@@ -128,15 +128,14 @@ public class Login {
 						//here dipesh is database name, root is username and password  
 						Statement stmt=con.createStatement();  
 //						ResultSet rs1=stmt.executeQuery("create table if not exists customer(F_name varchar(20),L_name varchar(20),Mobile varchar(10))");  
+						
+//Using BIND VAIRABLE concept for accessing values from database through a specific mobile number present in a VARIABLE
 						String select="select * from customer where Mobile=?";
 						prepStmt = con.prepareStatement(select);
 						prepStmt.setString(1,mobileEntered);
 						ResultSet rs2=prepStmt.executeQuery();
 						
-						
-//						dbMobileNo=rs2.getString(2);
-//						dbFname=rs2.getString(0);
-						
+//Retrived database values are put into the variables and displaying				
 						while(rs2.next())
 						{
 							dbFname=rs2.getString("F_name");
