@@ -213,7 +213,6 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
             	        
         } while (System.currentTimeMillis() < end);
     	
-    	
         	Billing b1=new Billing(a,itemPrice);
         	b1.main(a,itemPrice); 
         	

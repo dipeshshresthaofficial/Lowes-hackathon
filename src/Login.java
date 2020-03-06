@@ -11,12 +11,19 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.BasicConfigurator;
 
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import javax.swing.SwingConstants;
 import java.awt.Font;
 
@@ -24,14 +31,20 @@ public class Login {
 
 	private JFrame frame;
 	private JTextField mobileField;
-	String originalMobile= "8073977621";
+	String mobileEntered="";
 	String originalPwd = "admin";
+	String dbFname="";
+	String dbMobileNo="";
+	PreparedStatement prepStmt=null;
+	boolean result;
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 //		BasicConfigurator.configure();
+		
+			
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -48,8 +61,28 @@ public class Login {
 	 * Create the application.
 	 */
 	public Login() {
+//		Database();
 		initialize();
 	}
+
+//	private void Database() {
+//		// TODO Auto-generated method stub
+//		try{  
+//			Class.forName("org.sqlite.JDBC");  
+//			Connection con=DriverManager.getConnection( 
+//			"jdbc:sqlite:C:\\Users\\Dipesh Shrestha\\eclipse-workspace\\Project3 working copy\\Database\\lowes.db");  
+//			//here dipesh is database name, root is username and password  
+//			Statement stmt=con.createStatement();  
+//			ResultSet rs1=stmt.executeQuery("create table if not exists customer(F_name varchar(20),L_name varchar(20),Mobile varchar(10))");  
+//			ResultSet rs2=stmt.executeQuery("select mobile,fname from customer where mobile=");
+//
+////			while(rs.next())  
+////			System.out.println(rs.getInt(1)+"  "+rs.getString(2));  
+//			con.close();  
+//			}catch(Exception e){ System.out.println(e);}  
+//  
+//		
+//	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -78,18 +111,57 @@ public class Login {
 		fastPayBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String mobileEntered= mobileField.getText();
-				if(mobileEntered.matches(originalMobile)) {
-//					JOptionPane.showMessageDialog(null, "Correct Password..");
-					
+				mobileEntered= mobileField.getText();
+				System.out.println(mobileEntered);
 
-					
-					Dashboard d1= new Dashboard();
-					d1.main(null);
+//				checking if the mobile number entered only contains numbers or not through REGULAR EXPRESSION
+				if(!(mobileEntered.matches("[0-9]+"))){
+					JOptionPane.showMessageDialog(null, "Please enter valid mobile number");
 				}
 				else {
-					 
+					
+					try{  
+						
+						Class.forName("org.sqlite.JDBC");  
+						Connection con=DriverManager.getConnection( 
+						"jdbc:sqlite:./Database/lowes.db");  
+						//here dipesh is database name, root is username and password  
+						Statement stmt=con.createStatement();  
+//						ResultSet rs1=stmt.executeQuery("create table if not exists customer(F_name varchar(20),L_name varchar(20),Mobile varchar(10))");  
+						String select="select * from customer where Mobile=?";
+						prepStmt = con.prepareStatement(select);
+						prepStmt.setString(1,mobileEntered);
+						ResultSet rs2=prepStmt.executeQuery();
+						
+						
+//						dbMobileNo=rs2.getString(2);
+//						dbFname=rs2.getString(0);
+						
+						while(rs2.next())
+						{
+							dbFname=rs2.getString("F_name");
+							String lname=rs2.getString("L_name");
+							dbMobileNo=rs2.getString("Mobile");
+							System.out.println(dbFname+" "+lname+"  "+dbMobileNo);
+						}
+							  
+						con.close();  
+						}catch(Exception e1){ System.out.println(e1);}  
+					
+					if(mobileEntered.matches(dbMobileNo)) {
+//						JOptionPane.showMessageDialog(null, "Correct Password..");
+						
+						frame.dispose();
+						Dashboard d1= new Dashboard();
+						d1.main(null);
+					}
+					else {
+						 
+						NewCustomer n1=new NewCustomer(mobileEntered);
+						n1.main(mobileEntered);
+					}
 				}
+				
 			}
 		});
 		fastPayBtn.setBounds(330, 140, 100, 42);
