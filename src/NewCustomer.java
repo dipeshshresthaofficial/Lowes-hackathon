@@ -99,7 +99,7 @@ public class NewCustomer {
 				try{  
 					Class.forName("org.sqlite.JDBC");  
 					Connection con=DriverManager.getConnection( 
-					"jdbc:sqlite:C:\\Users\\Dipesh Shrestha\\eclipse-workspace\\Project3 working copy\\Database\\lowes.db");  
+					"jdbc:sqlite:./Database/lowes.db");  
 					//here dipesh is database name, root is username and password  
 					Statement stmt=con.createStatement();  
 					//ResultSet rs1=stmt.executeQuery("create table if not exists customer(F_name varchar(20),L_name varchar(20),Mobile varchar(10))");  
